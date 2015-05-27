@@ -41,14 +41,14 @@ angular.module('gdgXBoomerang')
 .factory('Config', function () {
     return {
         // TODO Modify these to configure your app
-        'name'          : 'GDG Space Coast',
-        'id'            : '103959793061819610212',
-        'googleApi'     : 'AIzaSyA9ALjr2iWvhf3Rsz9-bH0cEcDcrdkpuAg',
-        'pwaId'         : '5915725140705884785', // Picasa Web Album id, must belong to Google+ id above
-        'domain'        : 'http://www.gdgspacecoast.org',
-        'twitter'       : 'gdgspacecoast',
-        'facebook'      : 'gdgspacecoast',
-        'meetup'        : 'gdgspacecoast',
+        'name'          : 'GDG Akure',
+        'id'            : '113800801882072410635',
+        'googleApi'     : 'AIzaSyAV9uAm9uWCtvaeKcTXV8YJWAsVNGRZfow',
+        'pwaId'         : '6110815839110189985', // Picasa Web Album id, must belong to Google+ id above
+        'domain'        : 'http://akure.gdg.ng',
+        'twitter'       : 'gdgakure',
+        'facebook'      : 'gdgakure',
+        'meetup'        : '',
         // Change to 'EEEE, MMMM d, y - H:mm' for 24 hour time format.
         'dateFormat'    : 'EEEE, MMMM d, y - h:mm a',
         'cover' : {
@@ -364,21 +364,6 @@ angular.module('gdgXBoomerang')
 });
 
 angular.module('gdgXBoomerang')
-.controller('OrganizersController', function ($http, Config, NavService) {
-    var vm = this;
-    vm.loading = false;
-    NavService.setNavTab(4);
-
-    var url = 'http://hub.gdgx.io/api/v1/chapters/' + Config.id + '?callback=JSON_CALLBACK';
-    var headers = { 'headers': { 'Accept': 'application/json;' }, 'timeout': 2000 };
-    $http.jsonp(url, headers).success(function (data) {
-        if (data.organizers) {
-            vm.organizers = data.organizers;
-        }
-    });
-});
-
-angular.module('gdgXBoomerang')
 .controller('NewsController', function ($http, $timeout, $filter, $log, $sce, Config, NavService) {
     var vm = this;
     NavService.setNavTab(1);
@@ -448,6 +433,21 @@ angular.module('gdgXBoomerang')
 });
 
 angular.module('gdgXBoomerang')
+.controller('OrganizersController', function ($http, Config, NavService) {
+    var vm = this;
+    vm.loading = false;
+    NavService.setNavTab(4);
+
+    var url = 'http://hub.gdgx.io/api/v1/chapters/' + Config.id + '?callback=JSON_CALLBACK';
+    var headers = { 'headers': { 'Accept': 'application/json;' }, 'timeout': 2000 };
+    $http.jsonp(url, headers).success(function (data) {
+        if (data.organizers) {
+            vm.organizers = data.organizers;
+        }
+    });
+});
+
+angular.module('gdgXBoomerang')
 .controller('PhotosController', function ($http, Config, NavService) {
     var vm = this;
     vm.loading = true;
@@ -482,33 +482,6 @@ angular.module('gdgXBoomerang')
                 'Logging out of your Google Account and logging back in may resolve this issue.';
             vm.loading = false;
         });
-});
-
-'use strict';
-
-angular.module('gdgXBoomerang')
-.directive('gplusPerson', function ($http, $filter, Config) {
-    return {
-        restrict: 'EA',
-        templateUrl: 'app/organizers/components/gplus_person.html',
-        scope: {
-            gplusId: '='
-        },
-        link: function (scope) {
-            scope.$watch('gplusId', function (oldVal, newVal) {
-                if (newVal) {
-                    $http.jsonp('https://www.googleapis.com/plus/v1/people/' + newVal +
-                        '?callback=JSON_CALLBACK&fields=aboutMe%2CdisplayName%2Cimage&key=' + Config.googleApi)
-                        .success(function (data) {
-                            if (data && data.image && data.image.url) {
-                                data.image.url = data.image.url.replace('sz=50', 'sz=170');
-                            }
-                            scope.person = data;
-                        });
-                }
-            });
-        }
-    };
 });
 
 angular.module('gdgXBoomerang')
@@ -592,5 +565,32 @@ angular.module('gdgXBoomerang')
 .directive('newsItemFooter', function () {
     return {
         templateUrl: 'app/news/components/newsItemFooter.html'
+    };
+});
+
+'use strict';
+
+angular.module('gdgXBoomerang')
+.directive('gplusPerson', function ($http, $filter, Config) {
+    return {
+        restrict: 'EA',
+        templateUrl: 'app/organizers/components/gplus_person.html',
+        scope: {
+            gplusId: '='
+        },
+        link: function (scope) {
+            scope.$watch('gplusId', function (oldVal, newVal) {
+                if (newVal) {
+                    $http.jsonp('https://www.googleapis.com/plus/v1/people/' + newVal +
+                        '?callback=JSON_CALLBACK&fields=aboutMe%2CdisplayName%2Cimage&key=' + Config.googleApi)
+                        .success(function (data) {
+                            if (data && data.image && data.image.url) {
+                                data.image.url = data.image.url.replace('sz=50', 'sz=170');
+                            }
+                            scope.person = data;
+                        });
+                }
+            });
+        }
     };
 });
